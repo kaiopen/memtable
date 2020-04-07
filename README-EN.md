@@ -1,7 +1,7 @@
 # memtable
 A memory table for Go: A thread-safe map with automatic deletion.
 
-[中文版](https://github.com/kaiopen/memtable/master/README.md)
+[中文版](https://github.com/kaiopen/memtable/blob/master/README.md)
 
 ### Example
 ```go

@@ -1,7 +1,7 @@
 # memtable
 可以自动删除的内存表：使用线程安全的 Map 并且增加了自动删除功能。
 
-[English](https://github.com/kaiopen/memtable/master/README-EN.md)
+[English](https://github.com/kaiopen/memtable/blob/master/README-EN.md)
 
 ### 例子
 ```go
