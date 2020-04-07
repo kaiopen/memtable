@@ -1,9 +1,9 @@
 # memtable
-可以自动删除的内存表：使用线程安全的 Map 并且增加了自动删除功能。
+A memory table for Go: A thread-safe map with automatic deletion.
 
-[English](https://github.com/kaiopen/memtable/master/README-EN.md)
+[中文版](https://github.com/kaiopen/memtable/master/README.md)
 
-### 例子
+### Example
 ```go
 // Create a memory table.
 // Actually, it can be treated as a thread-safe map.
