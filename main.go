@@ -1,6 +1,7 @@
 package memtable
 
 import (
+	"log"
 	"sync"
 	"time"
 )
@@ -22,23 +23,37 @@ type MemTable struct {
 func (m *MemTable) Update(key interface{}, data interface{}, duration int64) {
 	m.Delete(key)
 
-	i := &Item{
-		data:      data,
-		hasExpiry: duration > 0,
-		delChan:   make(chan bool),
+	var i *Item
+	hasExpiry := duration > 0
+	if hasExpiry {
+		i = &Item{
+			data:      data,
+			hasExpiry: true,
+			delChan:   make(chan bool, 1),
+		}
+	} else {
+		i = &Item{
+			data:      data,
+			hasExpiry: false,
+			delChan:   nil,
+		}
 	}
-	m.items.Store(key, i)
 
-	if i.hasExpiry {
+	m.items.Store(key, i)
+	log.Printf("MemTable: %s update.\n", key)
+
+	if hasExpiry {
 		go func() {
+			defer log.Println("time func end.")
 			tricker := time.NewTicker(time.Second * time.Duration(duration))
 			select {
 			case <-tricker.C:
 				close(i.delChan)
 				m.items.Delete(key)
+				log.Println("MemTable: time out and delete.")
 			case <-i.delChan:
 				close(i.delChan)
-				m.items.Delete(key)
+				log.Println("MemTable: del chan got.")
 			}
 		}()
 	}
@@ -50,10 +65,9 @@ func (m *MemTable) Delete(key interface{}) {
 		item := i.(*Item)
 		if item.hasExpiry {
 			item.delChan <- true
-		} else {
-			close(item.delChan)
-			m.items.Delete(key)
 		}
+		m.items.Delete(key)
+		log.Println("MemTable: delete manually.")
 	}
 }
 
